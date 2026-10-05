@@ -264,10 +264,14 @@ async def send_student_ack(lead: dict) -> None:
         logger.error("student ack error: %s", exc)
 
 
-def build_daily_summary(leads: list[dict], day_label: str) -> tuple[str, str]:
+def build_daily_summary(
+    leads: list[dict], day_label: str, overdue_count: int = 0
+) -> tuple[str, str]:
     """Owner's morning digest of the enquiries received in the reporting window."""
     count = len(leads)
     subject = f"Daily Summary: {count} new enquir{'y' if count == 1 else 'ies'} ({day_label})"
+    if overdue_count:
+        subject += f" · {overdue_count} need follow-up"
 
     rows = ""
     for lead in leads:
@@ -286,6 +290,17 @@ def build_daily_summary(leads: list[dict], day_label: str) -> tuple[str, str]:
             "</tr>"
         )
 
+    overdue_block = ""
+    if overdue_count:
+        overdue_block = (
+            '<table role="presentation" width="100%" style="margin:0 0 18px">'
+            '<tr><td style="padding:12px 14px;background:#FEF3C7;border-left:3px solid #FFCD2A;'
+            'font-size:14px;color:#78350F;line-height:1.6">'
+            f"<strong>{overdue_count} enquir{'y' if overdue_count == 1 else 'ies'}</strong> "
+            "still marked New after 2+ days. Please call them today so nobody slips through."
+            "</td></tr></table>"
+        )
+
     html = (
         '<table role="presentation" width="100%" style="background:#F8FAFC;padding:24px 0">'
         '<tr><td align="center">'
@@ -302,6 +317,7 @@ def build_daily_summary(leads: list[dict], day_label: str) -> tuple[str, str]:
         '<p style="margin:0 0 18px;font-size:15px;color:#0F172A">'
         f"You received <strong>{count}</strong> new enquir{'y' if count == 1 else 'ies'}. "
         "Call them back today so nobody slips through.</p>"
+        f"{overdue_block}"
         '<table role="presentation" width="100%" style="border-collapse:collapse">'
         '<tr>'
         '<th align="left" style="padding:0 8px 8px;font-size:11px;color:#64748B;'
@@ -329,15 +345,22 @@ def build_daily_summary(leads: list[dict], day_label: str) -> tuple[str, str]:
     return subject, html
 
 
-async def send_daily_summary(leads: list[dict], day_label: str) -> None:
+async def send_daily_summary(
+    leads: list[dict], day_label: str, overdue_count: int = 0
+) -> None:
     """Owner digest. Caller decides whether to skip an empty day."""
     if not EMAIL_KEY or not OWNER_EMAIL:
         logger.warning("send_daily_summary skipped: EMERGENT_EMAIL_KEY or OWNER_EMAIL unset")
         return
     try:
-        subject, html = build_daily_summary(leads, day_label)
+        subject, html = build_daily_summary(leads, day_label, overdue_count)
         email_id = await send_email(to=OWNER_EMAIL, subject=subject, html=html)
-        logger.info("daily summary sent (%s) covering %d leads", email_id, len(leads))
+        logger.info(
+            "daily summary sent (%s) covering %d leads, %d overdue",
+            email_id,
+            len(leads),
+            overdue_count,
+        )
     except httpx.HTTPStatusError as exc:
         logger.error("daily summary failed: %s %s", exc.response.status_code, exc.response.text)
     except Exception as exc:  # noqa: BLE001

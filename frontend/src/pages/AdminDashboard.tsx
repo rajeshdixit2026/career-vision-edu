@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  AlertTriangle,
   Download,
   Inbox,
   LockKeyhole,
@@ -15,6 +16,7 @@ import {
 import { ApiError, apiGet, apiPatch, apiPost } from "@/lib/api";
 import type { AdminLeadsResponse, AdminSession, Lead } from "@/lib/types";
 import { LEAD_STATUSES, LEAD_STATUS_CLASSES, LEAD_STATUS_LABELS } from "@/lib/site";
+import LeadNotesDialog from "@/components/admin/LeadNotesDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,6 +65,7 @@ function toCsv(leads: Lead[]): string {
     "Type",
     "Status",
     "Message",
+    "Notes",
   ];
   const rows = leads.map((lead) =>
     [
@@ -75,6 +78,7 @@ function toCsv(leads: Lead[]): string {
       SOURCE_LABELS[lead.source ?? ""] ?? lead.source ?? "",
       LEAD_STATUS_LABELS[lead.status] ?? lead.status,
       (lead.message ?? "").replace(/\s+/g, " "),
+      (lead.notes ?? []).map((n) => n.text).join(" | ").replace(/\s+/g, " "),
     ]
       .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
       .join(","),
@@ -199,7 +203,11 @@ export default function AdminDashboard() {
     const term = search.trim().toLowerCase();
     return leads.filter((lead) => {
       if (sourceFilter && lead.source !== sourceFilter) return false;
-      if (statusFilter && lead.status !== statusFilter) return false;
+      if (statusFilter === "__overdue") {
+        if (!lead.overdue) return false;
+      } else if (statusFilter && lead.status !== statusFilter) {
+        return false;
+      }
       if (!term) return true;
       return [lead.name, lead.phone, lead.email, lead.course_interest, lead.state]
         .filter(Boolean)
@@ -231,12 +239,17 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { label: "Total Enquiries", value: stats?.total ?? 0, testid: "admin-stat-total" },
-    { label: "New / Uncalled", value: stats?.new ?? 0, testid: "admin-stat-new" },
-    { label: "Called", value: stats?.called ?? 0, testid: "admin-stat-called" },
-    { label: "Interested", value: stats?.interested ?? 0, testid: "admin-stat-interested" },
-    { label: "Admitted", value: stats?.admitted ?? 0, testid: "admin-stat-admitted" },
-    { label: "Last 7 Days", value: stats?.last_7_days ?? 0, testid: "admin-stat-recent" },
+    { label: "Total Enquiries", value: stats?.total ?? 0, testid: "admin-stat-total", alert: false },
+    { label: "New / Uncalled", value: stats?.new ?? 0, testid: "admin-stat-new", alert: false },
+    {
+      label: `Overdue (${stats?.follow_up_days ?? 2}+ days)`,
+      value: stats?.overdue ?? 0,
+      testid: "admin-stat-overdue",
+      alert: (stats?.overdue ?? 0) > 0,
+    },
+    { label: "Called", value: stats?.called ?? 0, testid: "admin-stat-called", alert: false },
+    { label: "Interested", value: stats?.interested ?? 0, testid: "admin-stat-interested", alert: false },
+    { label: "Admitted", value: stats?.admitted ?? 0, testid: "admin-stat-admitted", alert: false },
   ];
 
   return (
@@ -282,10 +295,25 @@ export default function AdminDashboard() {
             <div
               key={card.label}
               data-testid={card.testid}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(4,25,78,0.08)]"
+              className={`rounded-2xl border p-5 shadow-[0_4px_20px_-4px_rgba(4,25,78,0.08)] ${
+                card.alert ? "border-gold bg-gold-soft" : "border-slate-200 bg-white"
+              }`}
             >
-              <p className="font-heading text-3xl font-bold text-primary">{card.value}</p>
-              <p className="mt-1 text-xs font-medium text-muted-foreground">{card.label}</p>
+              <p
+                className={`font-heading text-3xl font-bold ${
+                  card.alert ? "text-[#78350F]" : "text-primary"
+                }`}
+              >
+                {card.value}
+              </p>
+              <p
+                className={`mt-1 flex items-center gap-1 text-xs font-medium ${
+                  card.alert ? "text-[#92400E]" : "text-muted-foreground"
+                }`}
+              >
+                {card.alert && <AlertTriangle className="size-3" />}
+                {card.label}
+              </p>
             </div>
           ))}
         </div>
@@ -315,10 +343,19 @@ export default function AdminDashboard() {
             <Select value={statusFilter} onValueChange={(value: string) => setStatusFilter(value)}>
               <SelectTrigger id="admin-status" data-testid="admin-status-filter-select" className="w-full">
                 <SelectValue>
-                  {(v: string) => (v ? (LEAD_STATUS_LABELS[v] ?? v) : "All statuses")}
+                  {(v: string) =>
+                    v === "__overdue"
+                      ? "Needs follow-up"
+                      : v
+                        ? (LEAD_STATUS_LABELS[v] ?? v)
+                        : "All statuses"
+                  }
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="__overdue" data-testid="admin-status-filter-option-overdue">
+                  Needs follow-up (overdue)
+                </SelectItem>
                 {LEAD_STATUSES.map((value) => (
                   <SelectItem
                     key={value}
@@ -421,6 +458,14 @@ export default function AdminDashboard() {
                   <TableRow key={lead.id} data-testid={`admin-lead-row-${lead.id}`}>
                     <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                       {formatDate(lead.created_at)}
+                      {lead.overdue && (
+                        <span
+                          data-testid={`admin-overdue-badge-${lead.id}`}
+                          className="mt-1 flex w-fit items-center gap-1 rounded-full bg-gold-soft px-2 py-0.5 text-[10px] font-bold text-[#92400E]"
+                        >
+                          <AlertTriangle className="size-2.5" /> Follow up
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <span className="block font-semibold text-foreground">{lead.name}</span>
@@ -430,6 +475,14 @@ export default function AdminDashboard() {
                       {lead.message && (
                         <span className="mt-1 block max-w-xs text-xs italic text-muted-foreground">
                           “{lead.message}”
+                        </span>
+                      )}
+                      {(lead.notes?.length ?? 0) > 0 && (
+                        <span
+                          data-testid={`admin-latest-note-${lead.id}`}
+                          className="mt-1.5 block max-w-xs border-l-2 border-gold pl-2 text-xs text-foreground/70"
+                        >
+                          {lead.notes[lead.notes.length - 1].text}
                         </span>
                       )}
                     </TableCell>
@@ -485,6 +538,7 @@ export default function AdminDashboard() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1.5">
+                        <LeadNotesDialog lead={lead} />
                         <a
                           href={`tel:+91${lead.phone}`}
                           aria-label={`Call ${lead.name}`}

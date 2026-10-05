@@ -8,19 +8,21 @@ import hashlib
 import hmac
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List
 
 from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, Field
 
 from lib.db import db
-from models.leads import Lead, LeadStatusUpdate
+from models.leads import Lead, LeadNote, LeadNoteCreate, LeadStatusUpdate
 
 router = APIRouter(prefix="/admin")
 logger = logging.getLogger(__name__)
 
 SESSION_COOKIE = "cv_admin_session"
+# An enquiry still marked "new" after this many days is flagged for follow-up.
+FOLLOW_UP_DAYS = 2
 
 
 class AdminLoginRequest(BaseModel):
@@ -41,6 +43,8 @@ class LeadStats(BaseModel):
     called: int
     interested: int
     admitted: int
+    overdue: int
+    follow_up_days: int
 
 
 class AdminLeadsResponse(BaseModel):
@@ -67,7 +71,16 @@ def _aware(doc: dict) -> dict:
     created = doc.get("created_at")
     if isinstance(created, datetime) and created.tzinfo is None:
         doc["created_at"] = created.replace(tzinfo=timezone.utc)
+    for note in doc.get("notes") or []:
+        note_created = note.get("created_at")
+        if isinstance(note_created, datetime) and note_created.tzinfo is None:
+            note["created_at"] = note_created.replace(tzinfo=timezone.utc)
     return doc
+
+
+def _is_overdue(lead: Lead, now: datetime) -> bool:
+    """Uncalled enquiries older than the follow-up window need chasing."""
+    return lead.status == "new" and (now - lead.created_at) >= timedelta(days=FOLLOW_UP_DAYS)
 
 
 @router.post("/login", response_model=AdminSession)
@@ -112,6 +125,9 @@ async def admin_leads(cv_admin_session: str | None = Cookie(default=None)):
     leads = [Lead(**_aware(doc)) for doc in docs]
 
     now = datetime.now(timezone.utc)
+    for lead in leads:
+        lead.overdue = _is_overdue(lead, now)
+
     recent = sum(1 for lead in leads if (now - lead.created_at).days < 7)
     stats = LeadStats(
         total=len(leads),
@@ -123,6 +139,8 @@ async def admin_leads(cv_admin_session: str | None = Cookie(default=None)):
         called=sum(1 for lead in leads if lead.status == "called"),
         interested=sum(1 for lead in leads if lead.status == "interested"),
         admitted=sum(1 for lead in leads if lead.status == "admitted"),
+        overdue=sum(1 for lead in leads if lead.overdue),
+        follow_up_days=FOLLOW_UP_DAYS,
     )
     return AdminLeadsResponse(stats=stats, leads=leads)
 
@@ -141,4 +159,26 @@ async def update_lead_status(
     )
     if not result:
         raise HTTPException(status_code=404, detail="Enquiry not found")
-    return Lead(**_aware(result))
+    lead = Lead(**_aware(result))
+    lead.overdue = _is_overdue(lead, datetime.now(timezone.utc))
+    return lead
+
+
+@router.post("/leads/{lead_id}/notes", response_model=Lead, status_code=201)
+async def add_lead_note(
+    lead_id: str,
+    input: LeadNoteCreate,
+    cv_admin_session: str | None = Cookie(default=None),
+):
+    _require_admin(cv_admin_session)
+    note = LeadNote(text=input.text.strip())
+    result = await db.leads.find_one_and_update(
+        {"id": lead_id},
+        {"$push": {"notes": note.model_dump()}},
+        return_document=True,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+    lead = Lead(**_aware(result))
+    lead.overdue = _is_overdue(lead, datetime.now(timezone.utc))
+    return lead

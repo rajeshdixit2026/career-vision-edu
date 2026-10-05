@@ -3,7 +3,7 @@
 import os
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -57,9 +57,22 @@ class LeadCreate(BaseModel):
         return v
 
 
+class LeadNote(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    text: str = Field(min_length=1, max_length=2000)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class LeadNoteCreate(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+
+
 class Lead(LeadCreate):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     status: str = "new"
+    notes: List[LeadNote] = Field(default_factory=list)
+    # Derived at read time: an uncalled enquiry older than the follow-up window.
+    overdue: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 

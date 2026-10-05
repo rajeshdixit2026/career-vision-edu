@@ -17,6 +17,8 @@ router = APIRouter(prefix="/cron")
 logger = logging.getLogger(__name__)
 
 IST = ZoneInfo("Asia/Kolkata")
+# Keep in step with routers/admin.py FOLLOW_UP_DAYS.
+FOLLOW_UP_DAYS = 2
 
 # Run ids already handled, so a duplicate delivery is acked without resending email.
 _seen_runs: set[str] = set()
@@ -37,11 +39,18 @@ async def _run_daily_summary() -> None:
     """Collect the last 24h of enquiries (IST) and email the owner. Skips empty days."""
     since = datetime.now(timezone.utc) - timedelta(hours=24)
     docs = await db.leads.find({"created_at": {"$gte": since}}).sort("created_at", -1).to_list(500)
-    if not docs:
-        logger.info("daily summary skipped: no new enquiries in the last 24h")
+
+    # Anything still uncalled past the follow-up window gets chased in the same email.
+    overdue_before = datetime.now(timezone.utc) - timedelta(days=FOLLOW_UP_DAYS)
+    overdue = await db.leads.count_documents(
+        {"status": "new", "created_at": {"$lt": overdue_before}}
+    )
+
+    if not docs and not overdue:
+        logger.info("daily summary skipped: no new enquiries and nothing overdue")
         return
     day_label = datetime.now(IST).strftime("%d %b %Y") + " · last 24 hours"
-    await send_daily_summary(docs, day_label)
+    await send_daily_summary(docs, day_label, overdue_count=overdue)
 
 
 @router.post("/daily-summary")

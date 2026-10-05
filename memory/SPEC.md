@@ -15,7 +15,7 @@ based in **Gopalganj, Bihar**, serving students across India.
 
 ## Backend (all under /api, via api_router in server.py)
 - `GET /api/courses?category=` → Course[] (28 seeded)
-- `GET /api/colleges?search=&state=&stream=` → College[] (20 seeded)
+- `GET /api/colleges?search=&state=&stream=` → College[] (58 seeded, incl. the owner-supplied partner list)
 - `POST /api/leads` → Lead (201). Body: name, phone (validated 10-digit Indian mobile), email?, course_interest?, state?, message?, source: apply|counselling|contact
 - `POST /api/enquiries` → Lead (201). Same model; forces source="contact" (contact page form).
 - `GET /api/leads` → Lead[] **requires header `X-Admin-Key` matching ADMIN_KEY in backend/.env** (401 otherwise).
@@ -24,7 +24,7 @@ based in **Gopalganj, Bihar**, serving students across India.
 ## Data model (Pydantic ↔ hand-written TS mirrors in frontend/src/lib/types.ts)
 - Course: id, name, category, level, duration, eligibility, fee_range, description, career_outcomes[], popular
 - College: id, name, city, state, type (Government|Private|Private (Deemed)), streams[], rating, fee_range, description, featured
-- Lead: LeadCreate fields + id, status (`new` default), created_at (aware UTC on write, normalised on read)
+- Lead: LeadCreate fields + id, status (`new` default), notes (`LeadNote[]`: id/text/created_at), overdue (derived at read time, never stored), created_at (aware UTC on write, normalised on read)
 
 ## Seed / fallback
 - `cd /app/backend && python seed.py` — idempotent wipe+reseed of courses & colleges (stable slug ids like `course-btech`, `col-galgotias`).
@@ -41,7 +41,9 @@ based in **Gopalganj, Bihar**, serving students across India.
 - PIN gate → `POST /api/admin/login` sets an httpOnly cookie (`cv_admin_session`, HMAC of ADMIN_PIN). `GET /api/admin/me` answers "am I logged in", `POST /api/admin/logout` clears it.
 - `GET /api/admin/leads` (cookie-protected) returns `{stats, leads}`: totals per source, per status, and last-7-days count, plus every enquiry newest-first.
 - `PATCH /api/admin/leads/{lead_id}/status` (cookie-protected) sets the pipeline status. Valid: `new | called | interested | admitted | not_interested`. 404 on unknown id, 422 on an invalid status.
-- UI: 6 stat cards (total / new / called / interested / admitted / last 7 days), search box, status filter, request-type filter, CSV export (includes status), per-row status dropdown and call + WhatsApp buttons.
+- `POST /api/admin/leads/{lead_id}/notes` (cookie-protected) appends a timestamped call note `{id, text, created_at}` and returns the updated lead. 404 on unknown id, 422 on empty text.
+- **Follow-up flagging** is derived, not stored: a lead with `status == "new"` older than `FOLLOW_UP_DAYS` (2, in `routers/admin.py`) comes back with `overdue: true`, and `stats.overdue` / `stats.follow_up_days` summarise it. Changing the status clears the flag automatically.
+- UI: 6 stat cards (total / new / **overdue, highlighted gold when > 0** / called / interested / admitted), search box, status filter (incl. a "Needs follow-up (overdue)" option, value `__overdue`), request-type filter, CSV export (status + notes included), per-row notes dialog with a count badge, latest-note preview under the student name, "Follow up" row badge, and call + WhatsApp buttons.
 - PIN is `ADMIN_PIN` in backend/.env (see memory/test_credentials.md).
 
 ## Email (lib/email.py — Emergent managed Resend proxy)
@@ -54,7 +56,8 @@ Three server-side templates; all sends pass `_assert_safe_email()` and run via `
 ## Scheduled task (`.emergent/crons.yml`)
 - `daily-enquiry-summary` → `POST /api/cron/daily-summary` at `0 8 * * *` Asia/Kolkata (8:00 AM IST).
 - Endpoint requires `Authorization: Bearer $WEBHOOK_CRON_SECRET` (constant-time compare), dedupes on `X-Webhook-Id`, acks 2xx immediately and backgrounds the work.
-- **Empty days are skipped** — no email is sent when no enquiries arrived in the last 24h (owner's choice).
+- The email lists the last 24h of enquiries AND a gold callout counting anything still uncalled past the follow-up window.
+- **Skipped only when there is nothing to report** — no new enquiries AND nothing overdue (owner's choice).
 
 ## Imagery
 - All site imagery is brand-generated navy/gold vector graphics (no people, no stock photos) hosted on the Emergent CDN; URLs live in `IMAGES` in `frontend/src/lib/site.ts`. The owner plans to supply real office/team photos later — swap the `IMAGES` URLs when they arrive.

@@ -36,9 +36,17 @@ export interface LeadCreate {
   source?: string;
 }
 
+export interface LeadNote {
+  id: string;
+  text: string;
+  created_at: string;
+}
+
 export interface Lead extends LeadCreate {
   id: string;
   status: string;
+  notes: LeadNote[];
+  overdue: boolean;
   created_at: string;
 }
 
@@ -56,6 +64,8 @@ export interface LeadStats {
   called: number;
   interested: number;
   admitted: number;
+  overdue: number;
+  follow_up_days: number;
 }
 
 export interface AdminLeadsResponse {
