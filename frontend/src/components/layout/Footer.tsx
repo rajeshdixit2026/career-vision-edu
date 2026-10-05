@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { GraduationCap, Mail, MapPin, Phone } from "lucide-react";
-import { SiInstagram } from "@icons-pack/react-simple-icons";
+import { GraduationCap, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { SiFacebook, SiInstagram, SiWhatsapp } from "@icons-pack/react-simple-icons";
 import { CONTACT, FOOTER_NAV, SITE_NAME } from "@/lib/site";
 
 export default function Footer() {
@@ -28,14 +28,34 @@ export default function Footer() {
             college, the right future.
           </p>
           <a
-            href="https://www.instagram.com/careervisioneducationservices/"
+            href={CONTACT.instagram}
             target="_blank"
             rel="noreferrer"
             aria-label="Career Vision Education Services on Instagram"
             data-testid="footer-instagram-link"
-            className="mt-4 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
+            className="mt-4 mr-2 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
           >
             <SiInstagram className="size-4" />
+          </a>
+          <a
+            href={CONTACT.facebook}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Career Vision Education Services on Facebook"
+            data-testid="footer-facebook-link"
+            className="mt-4 mr-2 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
+          >
+            <SiFacebook className="size-4" />
+          </a>
+          <a
+            href={CONTACT.whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Chat with Career Vision Education Services on WhatsApp"
+            data-testid="footer-whatsapp-link"
+            className="mt-4 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
+          >
+            <SiWhatsapp className="size-4" />
           </a>
         </div>
 
@@ -106,11 +126,14 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href={`tel:${CONTACT.phone2.replace(/\s/g, "")}`}
-                data-testid="footer-phone-2-link"
+                href={CONTACT.whatsapp}
+                target="_blank"
+                rel="noreferrer"
+                data-testid="footer-whatsapp-number-link"
                 className="flex gap-2.5 transition-colors hover:text-gold"
               >
-                <Phone className="mt-0.5 size-4 shrink-0 text-gold" /> {CONTACT.phone2}
+                <MessageCircle className="mt-0.5 size-4 shrink-0 text-gold" />
+                {CONTACT.whatsappNumber} (WhatsApp)
               </a>
             </li>
             <li>

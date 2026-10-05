@@ -36,7 +36,7 @@ export default function Navbar() {
       {/* Utility strip — desktop only */}
       <div className="hidden bg-navy-deep text-xs text-white/70 md:block">
         <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <p>{CONTACT.hours} · District Centre, Janakpuri, New Delhi</p>
+          <p>{CONTACT.hours} · Banjari Road, Gopalganj, Bihar</p>
           <div className="flex items-center gap-5">
             <a
               href={`tel:${CONTACT.phone1.replace(/\s/g, "")}`}
@@ -52,8 +52,7 @@ export default function Navbar() {
             >
               <Mail className="size-3" /> {CONTACT.email}
             </a>
-          </div>
-        </div>
+          </div>        </div>
       </div>
 
       {/* Main bar */}

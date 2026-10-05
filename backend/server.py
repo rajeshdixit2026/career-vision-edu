@@ -17,7 +17,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 from lib.db import client, db, ensure_indexes
-from routers import catalog, leads
+from routers import admin, catalog, leads
 
 
 # Startup runs before the yield, shutdown after it. Add your own setup/teardown here.
@@ -64,6 +64,7 @@ async def get_status_checks():
 # Resource routers (each module exposes its own APIRouter, folded into /api here)
 api_router.include_router(catalog.router)
 api_router.include_router(leads.router)
+api_router.include_router(admin.router)
 
 # Include the router in the main app
 app.include_router(api_router)

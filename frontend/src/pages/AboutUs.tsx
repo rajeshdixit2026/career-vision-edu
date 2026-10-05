@@ -48,14 +48,14 @@ export default function AboutUs() {
         <motion.div {...fadeUp} transition={{ duration: 0.4 }}>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#92400E]">Our story</p>
           <h2 className="mt-2 font-heading text-3xl font-bold md:text-4xl">
-            From a Janakpuri office to 5,000+ student success stories
+            From a Gopalganj office to 5,000+ student success stories
           </h2>
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground md:text-base">
             <p>
               Career Vision Education Services began with one belief: every student deserves honest,
-              expert guidance — not sales pitches. From our office in District Centre, Janakpuri
-              (New Delhi), we have spent over a decade counseling students from Delhi, Bihar, UP,
-              Jharkhand and across India.
+              expert guidance — not sales pitches. From our office on Banjari Road in Gopalganj
+              (Bihar), we have spent over a decade counseling students from Gopalganj, across Bihar,
+              and neighbouring states.
             </p>
             <p>
               As an authorized enrollment partner for universities across the country, we guide

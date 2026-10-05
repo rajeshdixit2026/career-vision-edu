@@ -40,3 +40,20 @@ export interface Lead extends LeadCreate {
   id: string;
   created_at: string;
 }
+
+export interface AdminSession {
+  authenticated: boolean;
+}
+
+export interface LeadStats {
+  total: number;
+  apply: number;
+  counselling: number;
+  contact: number;
+  last_7_days: number;
+}
+
+export interface AdminLeadsResponse {
+  stats: LeadStats;
+  leads: Lead[];
+}

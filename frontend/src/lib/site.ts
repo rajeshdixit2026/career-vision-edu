@@ -12,12 +12,20 @@ import {
 export const SITE_NAME = "Career Vision Education Services";
 
 export const CONTACT = {
-  addressLines: ["615B, 1st Floor, Plot No. 6, District Centre,", "Janakpuri, New Delhi – 110058"],
-  phone1: "+91 97113 56677",
-  phone2: "+91 96544 93444",
-  whatsapp: "https://wa.me/919711356677",
-  email: "info@careervisioneducationservices.com",
+  owner: "Rajesh Dixit",
+  addressLines: [
+    "2nd Floor, Sona Commercial Complex,",
+    "Above Mangal Marble, Banjari Road,",
+    "Gopalganj, Bihar – 841428",
+  ],
+  phone1: "+91 84346 99521",
+  whatsappNumber: "+91 62013 77781",
+  whatsapp: "https://wa.me/916201377781",
+  email: "careervisioneducationservices@gmail.com",
   hours: "Mon – Sat · 10:00 AM – 6:00 PM",
+  instagram:
+    "https://www.instagram.com/careervisioneducationservices?stkn=bDEwZzdtczBscTVt",
+  facebook: "https://www.facebook.com/share/1JXkyrPrMP/",
 };
 
 export interface NavLink {
@@ -160,7 +168,7 @@ export const TESTIMONIALS = [
     name: "Md. Imran",
     course: "B.Pharma · Meerut",
     quote:
-      "They guided my D.Pharma to B.Pharma upgrade and got my scholarship processed on time. Very supportive team — visited the Janakpuri office twice, always helpful.",
+      "They guided my D.Pharma to B.Pharma upgrade and got my scholarship processed on time. Very supportive team — visited the Gopalganj office twice, always helpful.",
   },
 ];
 

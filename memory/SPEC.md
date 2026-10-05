@@ -3,7 +3,7 @@
 ## What this app is
 A recreation of the owner's business site (careervisioneducationservices.com) as a modern
 multi-page marketing + lead-generation site: **career counseling & admission guidance consultancy
-based in Janakpuri, New Delhi**, serving students across India.
+based in **Gopalganj, Bihar**, serving students across India.
 
 - Brand: Navy `#04194E` primary + Gold `#FFCD2A` accent. Fonts: Outfit (headings) + Plus Jakarta Sans (body).
 - Public site: no login. Lead capture is the core business flow.
@@ -30,8 +30,23 @@ based in Janakpuri, New Delhi**, serving students across India.
 - `cd /app/backend && python seed.py` — idempotent wipe+reseed of courses & colleges (stable slug ids like `course-btech`, `col-galgotias`).
 - Frontend has FALLBACK_COURSES / FALLBACK_COLLEGES (lib/fallbackData.ts) shown only when the API errors, so the static preview never blanks.
 
-## Business contact shown on site (from public sources — owner should confirm)
-- Address: 615B, 1st Floor, Plot No. 6, District Centre, Janakpuri, New Delhi – 110058
-- Phones: +91 97113 56677 / +91 96544 93444 · WhatsApp wa.me/919711356677
-- Email: info@careervisioneducationservices.com · Hours: Mon–Sat 10 AM – 6 PM
-- Instagram: @careervisioneducationservices
+## Business contact (confirmed by the owner)
+- Owner: Rajesh Dixit
+- Address: 2nd Floor, Sona Commercial Complex, Above Mangal Marble, Banjari Road, Gopalganj, Bihar – 841428
+- Phone (call): +91 84346 99521 · WhatsApp: +91 62013 77781 (wa.me/916201377781)
+- Email: careervisioneducationservices@gmail.com · Hours: Mon–Sat 10 AM – 6 PM
+- Instagram + Facebook links in `frontend/src/lib/site.ts` CONTACT
+
+## Admin dashboard (`/admin`)
+- PIN gate → `POST /api/admin/login` sets an httpOnly cookie (`cv_admin_session`, HMAC of ADMIN_PIN). `GET /api/admin/me` answers "am I logged in", `POST /api/admin/logout` clears it.
+- `GET /api/admin/leads` (cookie-protected) returns `{stats, leads}`: totals per source + last-7-days count, and every enquiry newest-first.
+- UI: 5 stat cards, search box, request-type filter, CSV export, per-row call + WhatsApp buttons.
+- PIN is `ADMIN_PIN` in backend/.env (see memory/test_credentials.md).
+
+## Email alerts
+- `lib/email.py` — Emergent managed Resend proxy. Owner alert fires on every lead via `asyncio.create_task` so a slow/failing mail provider can never delay or break a student's submission (errors are logged only).
+- Recipient is `OWNER_EMAIL` (server config, never caller input); body comes from the server-side template `build_lead_alert()`; `_assert_safe_email()` gate runs on every send.
+- Env: `EMERGENT_EMAIL_KEY`, `EMAIL_FROM_NAME`, `OWNER_EMAIL`, `EMAIL_REPLY_TO`.
+
+## WhatsApp
+- `components/layout/WhatsAppButton.tsx` — floating CTA on every public page (hidden on `/admin`), with a dismissible hint bubble and a pre-filled message.

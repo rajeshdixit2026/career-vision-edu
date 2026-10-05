@@ -16,7 +16,7 @@ export default function ContactUs() {
       <PageHeader
         badge="Contact Us"
         title="Talk to a counselor — call, WhatsApp or visit us"
-        description="Our Janakpuri office is open six days a week. Walk in, call, or drop an enquiry — we respond within one working day."
+        description="Our Gopalganj office is open six days a week. Walk in, call, or drop an enquiry — we respond within one working day."
         image={IMAGES.campusHeritage}
       />
 
@@ -49,14 +49,16 @@ export default function ContactUs() {
                 data-testid="contact-phone-1-link"
                 className="block text-sm font-bold text-primary transition-colors hover:text-gold"
               >
-                {CONTACT.phone1}
+                {CONTACT.phone1} (Call)
               </a>
               <a
-                href={`tel:${CONTACT.phone2.replace(/\s/g, "")}`}
-                data-testid="contact-phone-2-link"
+                href={CONTACT.whatsapp}
+                target="_blank"
+                rel="noreferrer"
+                data-testid="contact-whatsapp-number-link"
                 className="block text-sm font-bold text-primary transition-colors hover:text-gold"
               >
-                {CONTACT.phone2}
+                {CONTACT.whatsappNumber} (WhatsApp)
               </a>
               <a
                 href={CONTACT.whatsapp}
