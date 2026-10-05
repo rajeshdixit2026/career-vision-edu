@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, field_validator
 from lib.db import db  # noqa: F401  (re-export keeps routers one-import away)
 
 VALID_SOURCES = {"apply", "counselling", "contact"}
+VALID_STATUSES = {"new", "called", "interested", "admitted", "not_interested"}
 
 
 def _normalise_phone(raw: str) -> str:
@@ -58,4 +59,16 @@ class LeadCreate(BaseModel):
 
 class Lead(LeadCreate):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    status: str = "new"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class LeadStatusUpdate(BaseModel):
+    status: str
+
+    @field_validator("status")
+    @classmethod
+    def status_allowed(cls, v: str) -> str:
+        if v not in VALID_STATUSES:
+            raise ValueError(f"status must be one of: {', '.join(sorted(VALID_STATUSES))}")
+        return v

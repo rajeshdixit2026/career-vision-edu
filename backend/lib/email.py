@@ -26,6 +26,11 @@ EMAIL_KEY = os.environ.get("EMERGENT_EMAIL_KEY", "")
 EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Career Vision Education Services")
 EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "")
+# Dashboard deep-link used in the daily summary. Must stay an https URL on our own app (G3).
+ADMIN_DASHBOARD_URL = (
+    os.environ.get("APP_URL", "https://career-vision-edu.preview.emergentagent.com").rstrip("/")
+    + "/admin"
+)
 
 _SHORTENERS = ("bit.ly", "tinyurl.com", "t.co", "is.gd", "cutt.ly", "goo.gl", "rebrand.ly")
 _CRED_ASK = (
@@ -201,3 +206,139 @@ async def notify_owner_of_lead(lead: dict) -> None:
         logger.error("lead alert failed: %s %s", exc.response.status_code, exc.response.text)
     except Exception as exc:  # noqa: BLE001 — alerting must never break the API
         logger.error("lead alert error: %s", exc)
+
+
+def build_student_ack(lead: dict) -> tuple[str, str]:
+    """Thank-you confirmation sent to the student. Copy supplied by the business owner."""
+    subject = "Thank You for Contacting Career Vision Education Services!"
+    name = str(lead.get("name") or "Student")
+    html = (
+        '<table role="presentation" width="100%" style="background:#F8FAFC;padding:24px 0">'
+        '<tr><td align="center">'
+        '<table role="presentation" width="100%" style="max-width:560px;background:#FFFFFF;'
+        'border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif">'
+        '<tr><td style="background:#04194E;padding:22px 24px">'
+        '<p style="margin:0;font-size:12px;letter-spacing:2px;color:#FFCD2A;font-weight:bold">'
+        'CAREER VISION EDUCATION SERVICES</p>'
+        '<p style="margin:8px 0 0;font-size:20px;color:#FFFFFF;font-weight:bold">'
+        '&#127891; Thank You for Contacting Us!</p>'
+        "</td></tr>"
+        '<tr><td style="padding:26px 24px">'
+        f'<p style="margin:0 0 14px;font-size:15px;color:#0F172A">Dear {escape(name)},</p>'
+        '<p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7">'
+        "Thank you for submitting your enquiry with Career Vision Education Services.</p>"
+        '<table role="presentation" width="100%" style="margin:0 0 16px">'
+        '<tr><td style="padding:12px 14px;background:#F8FAFC;border-left:3px solid #16A34A;'
+        'font-size:14px;color:#0F172A;line-height:1.7">'
+        "&#9989; We have successfully received your details.<br>"
+        "&#128222; Our counselling team will review your enquiry and contact you shortly "
+        "to assist you with the next steps.</td></tr></table>"
+        '<p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7">'
+        "We appreciate your interest in Career Vision Education Services and look forward to "
+        "helping you make the right decision for your education and career.</p>"
+        '<p style="margin:22px 0 0;font-size:14px;color:#0F172A;line-height:1.7">Regards,<br>'
+        '<strong>Career Vision Education Services</strong><br>'
+        '<span style="color:#92400E;font-style:italic">Your Career, Our Vision.</span></p>'
+        "</td></tr>"
+        '<tr><td style="padding:16px 24px;background:#F8FAFC">'
+        '<p style="margin:0;font-size:11px;color:#94A3B8;line-height:1.6">'
+        f"Sent by {escape(EMAIL_FROM_NAME)}, Gopalganj, Bihar. "
+        "We never ask for passwords or payment details by email.</p>"
+        "</td></tr></table></td></tr></table>"
+    )
+    return subject, html
+
+
+async def send_student_ack(lead: dict) -> None:
+    """Thank-you email to the student. Skipped silently when they left no email address."""
+    student_email = lead.get("email")
+    if not EMAIL_KEY or not student_email:
+        return
+    try:
+        subject, html = build_student_ack(lead)
+        email_id = await send_email(to=str(student_email), subject=subject, html=html)
+        logger.info("student ack sent (%s) for lead %s", email_id, lead.get("id"))
+    except httpx.HTTPStatusError as exc:
+        logger.error("student ack failed: %s %s", exc.response.status_code, exc.response.text)
+    except Exception as exc:  # noqa: BLE001 — never break lead capture
+        logger.error("student ack error: %s", exc)
+
+
+def build_daily_summary(leads: list[dict], day_label: str) -> tuple[str, str]:
+    """Owner's morning digest of the enquiries received in the reporting window."""
+    count = len(leads)
+    subject = f"Daily Summary: {count} new enquir{'y' if count == 1 else 'ies'} ({day_label})"
+
+    rows = ""
+    for lead in leads:
+        label = SOURCE_LABELS.get(str(lead.get("source", "")), "Enquiry")
+        course = str(lead.get("course_interest") or "—")
+        rows += (
+            '<tr>'
+            '<td style="padding:10px 8px;border-top:1px solid #E2E8F0;font-size:13px;'
+            f'color:#0F172A;font-weight:600">{escape(str(lead.get("name") or "Unknown"))}</td>'
+            '<td style="padding:10px 8px;border-top:1px solid #E2E8F0;font-size:13px;'
+            f'color:#0F172A">{escape(str(lead.get("phone") or "-"))}</td>'
+            '<td style="padding:10px 8px;border-top:1px solid #E2E8F0;font-size:12px;'
+            f'color:#64748B">{escape(course)}</td>'
+            '<td style="padding:10px 8px;border-top:1px solid #E2E8F0;font-size:12px;'
+            f'color:#64748B">{escape(label)}</td>'
+            "</tr>"
+        )
+
+    html = (
+        '<table role="presentation" width="100%" style="background:#F8FAFC;padding:24px 0">'
+        '<tr><td align="center">'
+        '<table role="presentation" width="100%" style="max-width:620px;background:#FFFFFF;'
+        'border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif">'
+        '<tr><td style="background:#04194E;padding:20px 24px">'
+        '<p style="margin:0;font-size:12px;letter-spacing:2px;color:#FFCD2A;font-weight:bold">'
+        'CAREER VISION EDUCATION SERVICES</p>'
+        '<p style="margin:6px 0 0;font-size:19px;color:#FFFFFF;font-weight:bold">'
+        'Daily Enquiry Summary</p>'
+        f'<p style="margin:4px 0 0;font-size:13px;color:#CBD5E1">{escape(day_label)}</p>'
+        "</td></tr>"
+        '<tr><td style="padding:24px">'
+        '<p style="margin:0 0 18px;font-size:15px;color:#0F172A">'
+        f"You received <strong>{count}</strong> new enquir{'y' if count == 1 else 'ies'}. "
+        "Call them back today so nobody slips through.</p>"
+        '<table role="presentation" width="100%" style="border-collapse:collapse">'
+        '<tr>'
+        '<th align="left" style="padding:0 8px 8px;font-size:11px;color:#64748B;'
+        'text-transform:uppercase;letter-spacing:1px">Student</th>'
+        '<th align="left" style="padding:0 8px 8px;font-size:11px;color:#64748B;'
+        'text-transform:uppercase;letter-spacing:1px">Mobile</th>'
+        '<th align="left" style="padding:0 8px 8px;font-size:11px;color:#64748B;'
+        'text-transform:uppercase;letter-spacing:1px">Course</th>'
+        '<th align="left" style="padding:0 8px 8px;font-size:11px;color:#64748B;'
+        'text-transform:uppercase;letter-spacing:1px">Type</th>'
+        "</tr>"
+        f"{rows}"
+        "</table>"
+        f'<p style="margin:24px 0 0"><a href="{escape(ADMIN_DASHBOARD_URL)}" '
+        'style="display:inline-block;background:#FFCD2A;color:#04194E;text-decoration:none;'
+        'padding:11px 22px;border-radius:999px;font-size:14px;font-weight:bold">'
+        "Open your dashboard</a></p>"
+        "</td></tr>"
+        '<tr><td style="padding:16px 24px;background:#F8FAFC">'
+        '<p style="margin:0;font-size:11px;color:#94A3B8;line-height:1.6">'
+        f"Automated daily summary from {escape(EMAIL_FROM_NAME)}. "
+        "We never ask you for passwords or payment details by email.</p>"
+        "</td></tr></table></td></tr></table>"
+    )
+    return subject, html
+
+
+async def send_daily_summary(leads: list[dict], day_label: str) -> None:
+    """Owner digest. Caller decides whether to skip an empty day."""
+    if not EMAIL_KEY or not OWNER_EMAIL:
+        logger.warning("send_daily_summary skipped: EMERGENT_EMAIL_KEY or OWNER_EMAIL unset")
+        return
+    try:
+        subject, html = build_daily_summary(leads, day_label)
+        email_id = await send_email(to=OWNER_EMAIL, subject=subject, html=html)
+        logger.info("daily summary sent (%s) covering %d leads", email_id, len(leads))
+    except httpx.HTTPStatusError as exc:
+        logger.error("daily summary failed: %s %s", exc.response.status_code, exc.response.text)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("daily summary error: %s", exc)

@@ -30,6 +30,7 @@ INDEXES: dict[str, list[IndexModel]] = {
     "leads": [
         IndexModel([("id", ASCENDING)], name="id", unique=True),
         IndexModel([("created_at", DESCENDING)], name="created_desc"),
+        IndexModel([("status", ASCENDING), ("created_at", DESCENDING)], name="status_created"),
     ],
 }
 

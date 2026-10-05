@@ -38,6 +38,7 @@ export interface LeadCreate {
 
 export interface Lead extends LeadCreate {
   id: string;
+  status: string;
   created_at: string;
 }
 
@@ -51,6 +52,10 @@ export interface LeadStats {
   counselling: number;
   contact: number;
   last_7_days: number;
+  new: number;
+  called: number;
+  interested: number;
+  admitted: number;
 }
 
 export interface AdminLeadsResponse {

@@ -12,8 +12,9 @@ import {
   Search,
   ShieldCheck,
 } from "lucide-react";
-import { ApiError, apiGet, apiPost } from "@/lib/api";
+import { ApiError, apiGet, apiPatch, apiPost } from "@/lib/api";
 import type { AdminLeadsResponse, AdminSession, Lead } from "@/lib/types";
+import { LEAD_STATUSES, LEAD_STATUS_CLASSES, LEAD_STATUS_LABELS } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,7 +53,17 @@ function formatDate(iso: string): string {
 }
 
 function toCsv(leads: Lead[]): string {
-  const header = ["Date", "Name", "Mobile", "Email", "Course Interest", "State", "Type", "Message"];
+  const header = [
+    "Date",
+    "Name",
+    "Mobile",
+    "Email",
+    "Course Interest",
+    "State",
+    "Type",
+    "Status",
+    "Message",
+  ];
   const rows = leads.map((lead) =>
     [
       formatDate(lead.created_at),
@@ -62,6 +73,7 @@ function toCsv(leads: Lead[]): string {
       lead.course_interest ?? "",
       lead.state ?? "",
       SOURCE_LABELS[lead.source ?? ""] ?? lead.source ?? "",
+      LEAD_STATUS_LABELS[lead.status] ?? lead.status,
       (lead.message ?? "").replace(/\s+/g, " "),
     ]
       .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
@@ -143,6 +155,7 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const sessionQuery = useQuery({
     queryKey: ["admin-session"],
@@ -156,6 +169,18 @@ export default function AdminDashboard() {
     queryFn: () => apiGet<AdminLeadsResponse>("/admin/leads"),
     enabled: authenticated,
     retry: false,
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      apiPatch<Lead>(`/admin/leads/${id}/status`, { status }),
+    onSuccess: (lead) => {
+      toast.success(`Marked as ${LEAD_STATUS_LABELS[lead.status] ?? lead.status}`, {
+        description: lead.name,
+      });
+      void queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
+    },
+    onError: () => toast.error("Could not update status", { description: "Please try again." }),
   });
 
   const logoutMutation = useMutation({
@@ -174,12 +199,13 @@ export default function AdminDashboard() {
     const term = search.trim().toLowerCase();
     return leads.filter((lead) => {
       if (sourceFilter && lead.source !== sourceFilter) return false;
+      if (statusFilter && lead.status !== statusFilter) return false;
       if (!term) return true;
       return [lead.name, lead.phone, lead.email, lead.course_interest, lead.state]
         .filter(Boolean)
         .some((field) => String(field).toLowerCase().includes(term));
     });
-  }, [leads, search, sourceFilter]);
+  }, [leads, search, sourceFilter, statusFilter]);
 
   function downloadCsv() {
     const blob = new Blob([toCsv(filtered)], { type: "text/csv;charset=utf-8;" });
@@ -206,10 +232,11 @@ export default function AdminDashboard() {
 
   const statCards = [
     { label: "Total Enquiries", value: stats?.total ?? 0, testid: "admin-stat-total" },
+    { label: "New / Uncalled", value: stats?.new ?? 0, testid: "admin-stat-new" },
+    { label: "Called", value: stats?.called ?? 0, testid: "admin-stat-called" },
+    { label: "Interested", value: stats?.interested ?? 0, testid: "admin-stat-interested" },
+    { label: "Admitted", value: stats?.admitted ?? 0, testid: "admin-stat-admitted" },
     { label: "Last 7 Days", value: stats?.last_7_days ?? 0, testid: "admin-stat-recent" },
-    { label: "Applications", value: stats?.apply ?? 0, testid: "admin-stat-apply" },
-    { label: "Counselling", value: stats?.counselling ?? 0, testid: "admin-stat-counselling" },
-    { label: "Contact Form", value: stats?.contact ?? 0, testid: "admin-stat-contact" },
   ];
 
   return (
@@ -250,7 +277,7 @@ export default function AdminDashboard() {
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           {statCards.map((card) => (
             <div
               key={card.label}
@@ -264,7 +291,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Toolbar */}
-        <div className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(4,25,78,0.08)] md:grid-cols-3">
+        <div className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(4,25,78,0.08)] md:grid-cols-4">
           <div className="space-y-1.5">
             <Label htmlFor="admin-search" className="text-xs font-semibold text-foreground/80">
               Search
@@ -280,6 +307,29 @@ export default function AdminDashboard() {
                 className="pl-9"
               />
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="admin-status" className="text-xs font-semibold text-foreground/80">
+              Status
+            </Label>
+            <Select value={statusFilter} onValueChange={(value: string) => setStatusFilter(value)}>
+              <SelectTrigger id="admin-status" data-testid="admin-status-filter-select" className="w-full">
+                <SelectValue>
+                  {(v: string) => (v ? (LEAD_STATUS_LABELS[v] ?? v) : "All statuses")}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {LEAD_STATUSES.map((value) => (
+                  <SelectItem
+                    key={value}
+                    value={value}
+                    data-testid={`admin-status-filter-option-${value}`}
+                  >
+                    {LEAD_STATUS_LABELS[value]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="admin-source" className="text-xs font-semibold text-foreground/80">
@@ -308,6 +358,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 setSearch("");
                 setSourceFilter("");
+                setStatusFilter("");
               }}
             >
               Clear
@@ -360,8 +411,8 @@ export default function AdminDashboard() {
                   <TableHead>Student</TableHead>
                   <TableHead>Mobile</TableHead>
                   <TableHead>Course Interest</TableHead>
-                  <TableHead>State</TableHead>
                   <TableHead>Type</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -385,9 +436,11 @@ export default function AdminDashboard() {
                     <TableCell className="whitespace-nowrap font-semibold">{lead.phone}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {lead.course_interest ?? "—"}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {lead.state ?? "—"}
+                      {lead.state && (
+                        <span className="mt-0.5 block text-xs text-muted-foreground/75">
+                          {lead.state}
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -396,6 +449,39 @@ export default function AdminDashboard() {
                       >
                         {SOURCE_LABELS[lead.source ?? ""] ?? lead.source}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={lead.status}
+                        onValueChange={(value: string) => {
+                          if (value !== lead.status) {
+                            statusMutation.mutate({ id: lead.id, status: value });
+                          }
+                        }}
+                      >
+                        <SelectTrigger
+                          size="sm"
+                          data-testid={`admin-status-select-${lead.id}`}
+                          className={`w-[140px] border-none font-semibold ${
+                            LEAD_STATUS_CLASSES[lead.status] ?? "bg-secondary"
+                          }`}
+                        >
+                          <SelectValue>
+                            {(v: string) => LEAD_STATUS_LABELS[v] ?? v}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LEAD_STATUSES.map((value) => (
+                            <SelectItem
+                              key={value}
+                              value={value}
+                              data-testid={`admin-status-option-${lead.id}-${value}`}
+                            >
+                              {LEAD_STATUS_LABELS[value]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1.5">

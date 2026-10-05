@@ -15,7 +15,7 @@ from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, Field
 
 from lib.db import db
-from models.leads import Lead
+from models.leads import Lead, LeadStatusUpdate
 
 router = APIRouter(prefix="/admin")
 logger = logging.getLogger(__name__)
@@ -37,6 +37,10 @@ class LeadStats(BaseModel):
     counselling: int
     contact: int
     last_7_days: int
+    new: int
+    called: int
+    interested: int
+    admitted: int
 
 
 class AdminLeadsResponse(BaseModel):
@@ -115,5 +119,26 @@ async def admin_leads(cv_admin_session: str | None = Cookie(default=None)):
         counselling=sum(1 for lead in leads if lead.source == "counselling"),
         contact=sum(1 for lead in leads if lead.source == "contact"),
         last_7_days=recent,
+        new=sum(1 for lead in leads if lead.status == "new"),
+        called=sum(1 for lead in leads if lead.status == "called"),
+        interested=sum(1 for lead in leads if lead.status == "interested"),
+        admitted=sum(1 for lead in leads if lead.status == "admitted"),
     )
     return AdminLeadsResponse(stats=stats, leads=leads)
+
+
+@router.patch("/leads/{lead_id}/status", response_model=Lead)
+async def update_lead_status(
+    lead_id: str,
+    input: LeadStatusUpdate,
+    cv_admin_session: str | None = Cookie(default=None),
+):
+    _require_admin(cv_admin_session)
+    result = await db.leads.find_one_and_update(
+        {"id": lead_id},
+        {"$set": {"status": input.status}},
+        return_document=True,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+    return Lead(**_aware(result))

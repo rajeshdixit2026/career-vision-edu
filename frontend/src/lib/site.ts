@@ -176,15 +176,35 @@ export const COLLEGE_TYPES = ["Government", "Private", "Private (Deemed)"];
 
 export const IMAGES = {
   heroCampus:
-    "https://images.unsplash.com/photo-1787151892015-d57558f964c3?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/0446d8da0beeab19918e41661bea66b144b0bc6c4336d0e1ce26e8fec9889c9b.jpeg",
   counseling:
-    "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/3a49b9d213d2a939b3a4b22514ec061c92741a1403ca467179c6206408f8881f.jpeg",
   campusModern:
-    "https://images.unsplash.com/photo-1562774053-701939374585?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/827f0444b4bfd4b5a65b890f11d0e1ae8643297b75a2d5b399e1c64e55d0bc2c.jpeg",
   campusHeritage:
-    "https://images.unsplash.com/photo-1695722099520-564bb36a3a6b?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/3a49b9d213d2a939b3a4b22514ec061c92741a1403ca467179c6206408f8881f.jpeg",
   documents:
-    "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/2df54f76ae279b0544887100a20d0a37f6efc8755d86b7490a11625b797e439b.jpeg",
+  achievement:
+    "https://static.prod-images.emergentagent.com/jobs/cb33b598-6800-4a2d-a5d0-3cfd9425c5ce/images/03ff2217d561ec758e11ac354bd1039cc68024d31125a67afa7144036bd0a4a7.jpeg",
+};
+
+export const LEAD_STATUSES = ["new", "called", "interested", "admitted", "not_interested"] as const;
+
+export const LEAD_STATUS_LABELS: Record<string, string> = {
+  new: "New",
+  called: "Called",
+  interested: "Interested",
+  admitted: "Admitted",
+  not_interested: "Not Interested",
+};
+
+export const LEAD_STATUS_CLASSES: Record<string, string> = {
+  new: "bg-secondary text-secondary-foreground",
+  called: "bg-[#DBEAFE] text-[#1E40AF]",
+  interested: "bg-gold-soft text-[#78350F]",
+  admitted: "bg-[#DCFCE7] text-[#166534]",
+  not_interested: "bg-[#F1F5F9] text-[#475569]",
 };
 
 export function categorySlug(category: string): string {

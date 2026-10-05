@@ -24,7 +24,7 @@ based in **Gopalganj, Bihar**, serving students across India.
 ## Data model (Pydantic ↔ hand-written TS mirrors in frontend/src/lib/types.ts)
 - Course: id, name, category, level, duration, eligibility, fee_range, description, career_outcomes[], popular
 - College: id, name, city, state, type (Government|Private|Private (Deemed)), streams[], rating, fee_range, description, featured
-- Lead: LeadCreate fields + id, created_at (aware UTC on write, normalised on read)
+- Lead: LeadCreate fields + id, status (`new` default), created_at (aware UTC on write, normalised on read)
 
 ## Seed / fallback
 - `cd /app/backend && python seed.py` — idempotent wipe+reseed of courses & colleges (stable slug ids like `course-btech`, `col-galgotias`).
@@ -39,14 +39,25 @@ based in **Gopalganj, Bihar**, serving students across India.
 
 ## Admin dashboard (`/admin`)
 - PIN gate → `POST /api/admin/login` sets an httpOnly cookie (`cv_admin_session`, HMAC of ADMIN_PIN). `GET /api/admin/me` answers "am I logged in", `POST /api/admin/logout` clears it.
-- `GET /api/admin/leads` (cookie-protected) returns `{stats, leads}`: totals per source + last-7-days count, and every enquiry newest-first.
-- UI: 5 stat cards, search box, request-type filter, CSV export, per-row call + WhatsApp buttons.
+- `GET /api/admin/leads` (cookie-protected) returns `{stats, leads}`: totals per source, per status, and last-7-days count, plus every enquiry newest-first.
+- `PATCH /api/admin/leads/{lead_id}/status` (cookie-protected) sets the pipeline status. Valid: `new | called | interested | admitted | not_interested`. 404 on unknown id, 422 on an invalid status.
+- UI: 6 stat cards (total / new / called / interested / admitted / last 7 days), search box, status filter, request-type filter, CSV export (includes status), per-row status dropdown and call + WhatsApp buttons.
 - PIN is `ADMIN_PIN` in backend/.env (see memory/test_credentials.md).
 
-## Email alerts
-- `lib/email.py` — Emergent managed Resend proxy. Owner alert fires on every lead via `asyncio.create_task` so a slow/failing mail provider can never delay or break a student's submission (errors are logged only).
-- Recipient is `OWNER_EMAIL` (server config, never caller input); body comes from the server-side template `build_lead_alert()`; `_assert_safe_email()` gate runs on every send.
+## Email (lib/email.py — Emergent managed Resend proxy)
+Three server-side templates; all sends pass `_assert_safe_email()` and run via `asyncio.create_task` so mail never delays or breaks a submission (failures are logged only).
+1. `notify_owner_of_lead` → owner alert on every new enquiry (recipient `OWNER_EMAIL`).
+2. `send_student_ack` → thank-you confirmation to the student, using the owner's supplied copy ("Your Career, Our Vision."). Skipped when the student left no email address.
+3. `send_daily_summary` → morning digest table of the last 24h of enquiries, with a dashboard deep-link.
 - Env: `EMERGENT_EMAIL_KEY`, `EMAIL_FROM_NAME`, `OWNER_EMAIL`, `EMAIL_REPLY_TO`.
+
+## Scheduled task (`.emergent/crons.yml`)
+- `daily-enquiry-summary` → `POST /api/cron/daily-summary` at `0 8 * * *` Asia/Kolkata (8:00 AM IST).
+- Endpoint requires `Authorization: Bearer $WEBHOOK_CRON_SECRET` (constant-time compare), dedupes on `X-Webhook-Id`, acks 2xx immediately and backgrounds the work.
+- **Empty days are skipped** — no email is sent when no enquiries arrived in the last 24h (owner's choice).
+
+## Imagery
+- All site imagery is brand-generated navy/gold vector graphics (no people, no stock photos) hosted on the Emergent CDN; URLs live in `IMAGES` in `frontend/src/lib/site.ts`. The owner plans to supply real office/team photos later — swap the `IMAGES` URLs when they arrive.
 
 ## WhatsApp
 - `components/layout/WhatsAppButton.tsx` — floating CTA on every public page (hidden on `/admin`), with a dismissible hint bubble and a pre-filled message.

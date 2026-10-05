@@ -7,7 +7,7 @@ from typing import List
 from fastapi import APIRouter
 
 from lib.db import db
-from lib.email import notify_owner_of_lead
+from lib.email import notify_owner_of_lead, send_student_ack
 from models.leads import Lead, LeadCreate
 
 router = APIRouter()
@@ -25,9 +25,10 @@ async def _save_and_notify(data: dict) -> Lead:
     lead = Lead(**data)
     doc = lead.model_dump()
     await db.leads.insert_one(doc)
-    # Owner alert runs in the background: a slow or failing mail provider must never
+    # Emails run in the background: a slow or failing mail provider must never
     # delay or break the student's submission.
     asyncio.create_task(notify_owner_of_lead(doc))
+    asyncio.create_task(send_student_ack(doc))
     return lead
 
 

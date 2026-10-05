@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Info, Search } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { College } from "@/lib/types";
-import { COURSE_CATEGORIES, categorySlug } from "@/lib/site";
+import { COURSE_CATEGORIES, categorySlug, IMAGES } from "@/lib/site";
 import { FALLBACK_COLLEGES } from "@/lib/fallbackData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +56,7 @@ export default function Colleges() {
         badge="Partner Colleges"
         title="150+ verified colleges across India"
         description="Government, private and deemed universities we work with directly — with transparent fees, real approvals and end-to-end admission support."
-        image="https://images.unsplash.com/photo-1562774053-701939374585?crop=entropy&cs=srgb&fm=jpg&q=85"
+        image={IMAGES.campusModern}
       />
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
