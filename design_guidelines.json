@@ -1,0 +1,216 @@
+{
+  "theme": "light",
+  "archetype": "Organic & Earthy meets High-Trust Institutional (Navy #04194E + Gold Accent #FFCD2A)",
+  "colors": {
+    "surfaces": [
+      {
+        "name": "page",
+        "kind": "solid",
+        "bg": "#F8FAFC",
+        "on_bg": "#0F172A",
+        "on_bg_muted": "#475569",
+        "roles": {
+          "link": "#04194E",
+          "error": "#DC2626",
+          "success": "#16A34A"
+        }
+      },
+      {
+        "name": "panel",
+        "kind": "solid",
+        "bg": "#FFFFFF",
+        "on_bg": "#0F172A",
+        "on_bg_muted": "#475569",
+        "roles": {
+          "link": "#04194E",
+          "error": "#DC2626",
+          "success": "#16A34A"
+        }
+      },
+      {
+        "name": "inverse",
+        "kind": "solid",
+        "bg": "#04194E",
+        "on_bg": "#FFFFFF",
+        "on_bg_muted": "#CBD5E1",
+        "roles": {
+          "link": "#FFCD2A",
+          "error": "#FCA5A5",
+          "success": "#86EFAC"
+        }
+      },
+      {
+        "name": "navy_card",
+        "kind": "solid",
+        "bg": "#072366",
+        "on_bg": "#FFFFFF",
+        "on_bg_muted": "#E2E8F0",
+        "roles": {
+          "link": "#FFCD2A",
+          "error": "#FCA5A5",
+          "success": "#86EFAC"
+        }
+      },
+      {
+        "name": "badge_gold",
+        "kind": "solid",
+        "bg": "#FEF3C7",
+        "on_bg": "#78350F",
+        "on_bg_muted": "#92400E"
+      },
+      {
+        "name": "hero",
+        "kind": "image",
+        "contrast_against": "#04194E",
+        "guarantee": "scrim: linear-gradient(135deg, rgba(4,25,78,0.92) 0%, rgba(4,25,78,0.85) 60%, rgba(15,23,42,0.90) 100%)",
+        "on_bg": "#FFFFFF",
+        "on_bg_muted": "#E2E8F0",
+        "roles": {
+          "link": "#FFCD2A",
+          "error": "#FCA5A5",
+          "success": "#86EFAC"
+        }
+      },
+      {
+        "name": "glass_header",
+        "kind": "glass",
+        "contrast_against": "#04194E",
+        "guarantee": "backdrop-blur-xl bg-[#04194E]/90 border-b border-white/10",
+        "on_bg": "#FFFFFF",
+        "on_bg_muted": "#CBD5E1",
+        "roles": {
+          "link": "#FFCD2A"
+        }
+      }
+    ],
+    "accent": "#FFCD2A",
+    "on_accent": "#04194E",
+    "primary": "#04194E",
+    "on_primary": "#FFFFFF"
+  },
+  "typography": {
+    "font_family_heading": "Outfit Variable, sans-serif",
+    "font_family_body": "Plus Jakarta Sans Variable, sans-serif",
+    "import_statements": [
+      "@import \"@fontsource-variable/outfit\";",
+      "@import \"@fontsource-variable/plus-jakarta-sans\";"
+    ],
+    "scale_px": {
+      "display": 56,
+      "h1": 44,
+      "h2": 32,
+      "h3": 22,
+      "body": 16,
+      "caption": 14
+    }
+  },
+  "entry_surfaces": {
+    "/": "split hero — brand badge + exact hero copy + gold CTAs left, high-contrast credibility quick-finder & counselor card right",
+    "/counseling": "editorial overview hero with 5-stage counseling framework and booking form",
+    "/colleges": "directory header with instant search + state/stream filters and responsive cards grid",
+    "/courses": "category-pill filter header with degree level tabs and career outcome detail cards",
+    "/bihar-credit-card": "government scheme authority layout — eligibility check, 4-lakh benefit breakdown, required documents list, instant application",
+    "/education-loan": "financial advisory layout — zero-collateral loan comparison, EMI guide, partner banks list, eligibility wizard",
+    "/scholarships": "merit and need-based scholarship directory with deadline status and application support form",
+    "/apply": "split application hub — why apply via Career Vision left, structured 3-step lead application form right",
+    "/about": "institutional trust narrative — Delhi Janakpuri headquarters, 12+ years experience, verified mentor network",
+    "/contact": "two-column contact hub — Janakpuri office address + hours + phone/WhatsApp left, interactive enquiry form right"
+  },
+  "visual_enhancers": {
+    "textures": "Subtle dot-matrix grid overlay on dark navy hero and CTA bands",
+    "badges": "Golden pill badge with sparkle icon: '⭐ Trusted Career & Admission Guidance'",
+    "borders": "1px crisp borders using slate-200 for cards in light sections and white/15 for dark navy cards",
+    "shadows": "Soft elevation shadow shadow-[0_4px_20px_-4px_rgba(4,25,78,0.08)] on college & course cards",
+    "accent_bars": "4px gold left border on featured service and scheme highlight callouts"
+  },
+  "grids_and_layouts": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "hero_grid": "grid grid-cols-1 lg:grid-cols-12 gap-12 items-center",
+    "services_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+    "stats_ribbon": "grid grid-cols-2 md:grid-cols-4 gap-6",
+    "colleges_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+    "forms_split": "grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+  },
+  "motion": {
+    "hover_lift": "transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg",
+    "button_press": "active:scale-[0.98] transition-transform duration-100",
+    "modal_backdrop": "backdrop-blur-sm transition-opacity duration-200",
+    "stagger_fade": "staggered entrance animations with motion/react for card lists",
+    "respect_reduced_motion": "Wrap animations with prefers-reduced-motion check or motion safe: utilities"
+  },
+  "accessibility": {
+    "text_contrast": "All text meets WCAG AA 4.5:1 ratio (white on #04194E navy is 16.5:1; #04194E text on #FFCD2A gold button is 11.8:1; #0F172A on #FFFFFF is 16.1:1)",
+    "focus_states": "focus-visible:ring-2 focus-visible:ring-[#FFCD2A] focus-visible:ring-offset-2 outline-none",
+    "keyboard_nav": "Full tab order support across all dialogs, selects, tabs, and form controls",
+    "touch_targets": "Minimum 44px height on mobile interactive elements"
+  },
+  "image_urls": {
+    "hero_students_campus": {
+      "url": "https://images.unsplash.com/photo-1787151892015-d57558f964c3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjBjb2xsZWdlJTIwc3R1ZGVudHMlMjBzdHVkeWluZyUyMGNhbXB1c3xlbnwwfHx8fDE3OTExODA3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Indian university students collaborating on campus grounds",
+      "placement": "Homepage hero background composite & About Us banner"
+    },
+    "counseling_session": {
+      "url": "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTB8MHwxfHNlYXJjaHwxfHxjYXJlZXIlMjBjb3Vuc2VsaW5nJTIwbWVldGluZyUyMG1lbnRvcnxlbnwwfHx8fDE3OTExODA3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Professional career counselor guiding student in 1-on-1 consultation",
+      "placement": "Career Counseling service page & Home Why Choose Us section"
+    },
+    "campus_building_modern": {
+      "url": "https://images.unsplash.com/photo-1562774053-701939374585?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwY2FtcHVzJTIwYnVpbGRpbmclMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzkxMTgwNzMwfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Top accredited engineering and management university campus",
+      "placement": "Colleges directory featured banners and College detail modal"
+    },
+    "campus_heritage": {
+      "url": "https://images.unsplash.com/photo-1695722099520-564bb36a3a6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjBjb2xsZWdlJTIwc3R1ZGVudHMlMjBzdHVkeWluZyUyMGNhbXB1c3xlbnwwfHx8fDE3OTExODA3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Prestigious medical and university campus architecture",
+      "placement": "Medical & Nursing colleges category card and Loan assistance page"
+    },
+    "guidance_documents": {
+      "url": "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTB8MHwxfHNlYXJjaHwzfHxjYXJlZXIlMjBjb3Vuc2VsaW5nJTIwbWVldGluZyUyMG1lbnRvcnxlbnwwfHx8fDE3OTExODA3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Student and advisor signing admission documentation and scholarship paperwork",
+      "placement": "Bihar Student Credit Card and Education Loan pages"
+    }
+  },
+  "component_paths": {
+    "header": "frontend/src/components/layout/Navbar.tsx",
+    "footer": "frontend/src/components/layout/Footer.tsx",
+    "quick_counselling_modal": "frontend/src/components/forms/QuickCounsellingModal.tsx",
+    "lead_capture_form": "frontend/src/components/forms/LeadCaptureForm.tsx",
+    "college_card": "frontend/src/components/cards/CollegeCard.tsx",
+    "course_card": "frontend/src/components/cards/CourseCard.tsx",
+    "funding_calculator": "frontend/src/components/tools/FundingCalculator.tsx",
+    "pages": {
+      "home": "frontend/src/pages/Home.tsx",
+      "about": "frontend/src/pages/AboutUs.tsx",
+      "courses": "frontend/src/pages/Courses.tsx",
+      "colleges": "frontend/src/pages/Colleges.tsx",
+      "counseling": "frontend/src/pages/CareerCounseling.tsx",
+      "bihar_credit_card": "frontend/src/pages/BiharStudentCreditCard.tsx",
+      "education_loan": "frontend/src/pages/EducationLoan.tsx",
+      "scholarships": "frontend/src/pages/Scholarships.tsx",
+      "contact": "frontend/src/pages/ContactUs.tsx",
+      "apply": "frontend/src/pages/ApplyNow.tsx"
+    }
+  },
+  "instructions_to_main_agent": [
+    "RECREATE EXACT BRAND IDENTIFIER: Use Navy (#04194E) as the dominant primary brand anchor and Gold-Yellow (#FFCD2A) as the primary kinetic trigger CTA color.",
+    "PRESERVE EXACT HERO COPY: Badge: '⭐ Trusted Career & Admission Guidance', H1: 'Make the Right Choice for Your Future.', Subcopy: 'Get expert career counseling and admission guidance to choose the right course, college and career path with confidence', Primary CTA: 'Book Free Counselling', Secondary CTA: 'Explore Colleges'.",
+    "HEADER MUST BE VISIBLE ON ALL PAGES: Fixed top navigation with glassmorphism/solid navy backing (never transparent over content), carrying Logo 'Career Vision Education Services', links (Home, About Us, Courses, Colleges, Career Counseling, Bihar Credit Card, Education Loan, Scholarships, Contact Us), and a high-converting 'Apply Now / Book Free Counselling' gold button.",
+    "SEED RICH DATA IN BACKEND: Include 15+ top Indian colleges (B.Tech, MBBS, MBA, BCA, BBA, B.Sc Nursing, B.Pharm across Delhi-NCR, Bangalore, Pune, Dehradun, Jaipur, Chandigarh, Patna) and 20+ courses with detailed eligibility, fee ranges in INR Lakhs, career outcomes, and Bihar Credit Card eligibility tags.",
+    "BIHAR STUDENT CREDIT CARD (MNSSBY) SPECIAL FEATURE: Include a dedicated calculator and step-by-step guidance showing 0% interest for girls/transgender/PwD, 4% for boys up to ₹4 Lakhs for approved technical/professional courses.",
+    "WORKING FORMS WITH FEEDBACK: Implement 'Book Free Counselling', 'Apply Now', and 'Contact Us' forms submitting via `apiPost` to `/api/leads` and `/api/enquiries`, with sonner toast confirmations, validation errors, and phone number Indian format (+91 / 10 digits).",
+    "ADD data-testid ON ALL INTERACTIVE ELEMENTS: Every button, link, filter tab, input, and modal trigger must carry role-based kebab-case test IDs (e.g. data-testid='hero-book-counselling-btn', data-testid='college-search-input', data-testid='filter-stream-engineering', data-testid='lead-form-submit-button').",
+    "PRESERVE JANAKPURI NEW DELHI OFFICE: Office Address: Career Vision Education Services, District Centre, Janakpuri, New Delhi - 110058, Helpline: +91 98765 43210 / +91 11 4567 8900, Email: info@careervisioneducations.com, Working Hours: Mon-Sat 9:30 AM - 6:30 PM IST.",
+    "GRACEFUL DEGRADATION: Ensure fallback seed items in frontend state so if the backend is momentarily offline, directory grids and forms still render seamlessly."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid AI slop: make Career Vision Education Services feel like an established, premier, high-trust Indian higher education consultancy.",
+    "Dark colors look good when used independently without generic gradients. Use deep Navy #04194E with crisp Gold #FFCD2A accents.",
+    "Create depth through layered cards, subtle borders, and 12-24px backdrop blurs on floating navigation and dialogs.",
+    "Do NOT apply universal transitions like 'transition: all'. Apply specific transitions like 'transition: transform 0.2s ease, box-shadow 0.2s ease'.",
+    "Never center align the entire app container or body text. Left-align dense information, credentials, and course catalogs.",
+    "Use pill-shaped gold CTA buttons with active/hover micro-animations.",
+    "Never use generic AI assistant emoji icons (🤖🧠💡). Use verified Lucide icons (GraduationCap, Award, Building2, BookOpen, Compass, ShieldCheck, IndianRupee, Phone, CheckCircle2, FileText, Sparkles).",
+    "Main agent relies on the Unsplash image URLs listed in this file. Never use dummyimage or via.placeholder."
+  ]
+}
