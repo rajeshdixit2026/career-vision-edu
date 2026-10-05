@@ -35,7 +35,7 @@ export default function ApplyNow() {
           <ul className="mt-8 space-y-4">
             {[
               "Free profile evaluation and course-matching session",
-              "Shortlist from 150+ verified partner colleges across India",
+              "Shortlist from 250+ verified partner colleges across India",
               "Complete application, documentation and deadline handling",
               "Bihar Student Credit Card, scholarship and loan support built in",
               "Post-admission support — hostel, enrolment, orientation",

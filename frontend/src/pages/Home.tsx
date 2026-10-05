@@ -117,7 +117,7 @@ export default function Home() {
                 </span>
                 <div>
                   <p className="font-heading text-base font-bold">Talk to a Senior Counselor</p>
-                  <p className="text-xs text-white/65">12+ years of admission experience</p>
+                  <p className="text-xs text-white/65">5+ years of admission experience</p>
                 </div>
               </div>
               <ul className="mt-4 space-y-2 text-sm text-white/80">
@@ -277,7 +277,7 @@ export default function Home() {
               className="aspect-[4/3] w-full rounded-2xl border-4 border-gold object-cover shadow-[0_20px_50px_-20px_rgba(4,25,78,0.35)]"
             />
             <div className="absolute -bottom-6 right-4 rounded-2xl bg-navy p-4 text-white shadow-xl md:right-10">
-              <p className="font-heading text-2xl font-bold text-gold">12+ Years</p>
+              <p className="font-heading text-2xl font-bold text-gold">5+ Years</p>
               <p className="text-xs text-white/70">of admission guidance</p>
             </div>
           </div>

@@ -39,7 +39,7 @@ export default function AboutUs() {
       <PageHeader
         badge="About Us"
         title="Guiding careers across India, honestly since 2013"
-        description="Career Vision Education Services is a Delhi-based admission and career guidance consultancy helping students choose the right course, college and career path — with funding support that makes it possible."
+        description="Career Vision EduServices is a Bihar-based admission and career guidance consultancy helping students choose the right course, college and career path — with funding support that makes it possible."
         image={IMAGES.heroCampus}
       />
 
@@ -48,13 +48,13 @@ export default function AboutUs() {
         <motion.div {...fadeUp} transition={{ duration: 0.4 }}>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#92400E]">Our story</p>
           <h2 className="mt-2 font-heading text-3xl font-bold md:text-4xl">
-            From a Gopalganj office to 5,000+ student success stories
+            From a Gopalganj office to thousands of student success stories
           </h2>
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground md:text-base">
             <p>
-              Career Vision Education Services began with one belief: every student deserves honest,
+              Career Vision EduServices began with one belief: every student deserves honest,
               expert guidance — not sales pitches. From our office on Banjari Road in Gopalganj
-              (Bihar), we have spent over a decade counseling students from Gopalganj, across Bihar,
+              (Bihar), we have spent 5+ years counseling students from Gopalganj, across Bihar,
               and neighbouring states.
             </p>
             <p>

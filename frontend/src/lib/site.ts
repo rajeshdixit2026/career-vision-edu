@@ -9,7 +9,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-export const SITE_NAME = "Career Vision Education Services";
+export const SITE_NAME = "Career Vision EduServices";
+export const SITE_TAGLINE = "Learn • Grow • Succeed";
+// Background-removed PNG in frontend/public — safe to place on navy surfaces.
+export const LOGO_URL = "/logo.png";
 
 export const CONTACT = {
   owner: "Rajesh Dixit",
@@ -79,7 +82,7 @@ export const SERVICES: Service[] = [
     icon: Building2,
     title: "College Selection",
     description:
-      "Shortlist from 150+ verified partner colleges with transparent fee, approval and placement data.",
+      "Shortlist from 250+ verified partner colleges with transparent fee, approval and placement data.",
     path: "/colleges",
   },
   {
@@ -106,24 +109,46 @@ export const SERVICES: Service[] = [
 ];
 
 export const HOME_STATS = [
-  { value: "12+", label: "Years of Experience" },
+  { value: "5+", label: "Years of Experience" },
   { value: "5,000+", label: "Students Guided" },
-  { value: "150+", label: "Partner Colleges" },
+  { value: "250+", label: "Partner Colleges" },
   { value: "4.9/5", label: "Counselling Rating" },
 ];
 
 export const COURSE_CATEGORIES = [
   "Engineering & Technology",
-  "Computer Applications",
-  "Management & Commerce",
-  "Medical & Nursing",
-  "Pharmacy",
-  "Paramedical & Health",
-  "Law",
-  "Education",
+  "Management",
+  "Computer/IT",
+  "Commerce",
+  "Science",
   "Agriculture",
-  "Arts & Media",
+  "Medical/Healthcare",
+  "Law",
+  "Arts/Humanities",
+  "Hospitality",
+  "Design/Media",
+  "Architecture",
+  "Education",
+  "Diploma/Vocational",
 ];
+
+// Emoji per stream, matching the owner's programme list.
+export const CATEGORY_ICONS: Record<string, string> = {
+  "Engineering & Technology": "💻",
+  Management: "💼",
+  "Computer/IT": "🖥️",
+  Commerce: "📚",
+  Science: "🔬",
+  Agriculture: "🌾",
+  "Medical/Healthcare": "🏥",
+  Law: "⚖️",
+  "Arts/Humanities": "🏛️",
+  Hospitality: "🏨",
+  "Design/Media": "🎨",
+  Architecture: "🏗️",
+  Education: "👨‍🏫",
+  "Diploma/Vocational": "🧑‍🔧",
+};
 
 export const INDIAN_STATES = [
   "Bihar",

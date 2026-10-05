@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { GraduationCap, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "@icons-pack/react-simple-icons";
-import { CONTACT, FOOTER_NAV, SITE_NAME } from "@/lib/site";
+import { CONTACT, FOOTER_NAV, LOGO_URL, SITE_NAME } from "@/lib/site";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -12,17 +12,11 @@ export default function Footer() {
     <footer className="bg-navy-deep text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-gold text-navy">
-              <GraduationCap className="size-5" />
-            </span>
-            <span className="leading-tight">
-              <span className="block font-heading text-base font-bold">Career Vision</span>
-              <span className="block text-[9px] font-semibold tracking-[0.22em] text-gold">
-                EDUCATION SERVICES
-              </span>
-            </span>
-          </div>
+          <img
+            src={LOGO_URL}
+            alt="Career Vision EduServices — Learn, Grow, Succeed"
+            className="h-16 w-auto object-contain"
+          />
           <p className="mt-4 text-sm leading-relaxed text-white/65">
             Trusted career counseling and admission guidance across India — the right course, the right
             college, the right future.
@@ -31,7 +25,7 @@ export default function Footer() {
             href={CONTACT.instagram}
             target="_blank"
             rel="noreferrer"
-            aria-label="Career Vision Education Services on Instagram"
+            aria-label="Career Vision EduServices on Instagram"
             data-testid="footer-instagram-link"
             className="mt-4 mr-2 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
           >
@@ -41,7 +35,7 @@ export default function Footer() {
             href={CONTACT.facebook}
             target="_blank"
             rel="noreferrer"
-            aria-label="Career Vision Education Services on Facebook"
+            aria-label="Career Vision EduServices on Facebook"
             data-testid="footer-facebook-link"
             className="mt-4 mr-2 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
           >
@@ -51,7 +45,7 @@ export default function Footer() {
             href={CONTACT.whatsapp}
             target="_blank"
             rel="noreferrer"
-            aria-label="Chat with Career Vision Education Services on WhatsApp"
+            aria-label="Chat with Career Vision EduServices on WhatsApp"
             data-testid="footer-whatsapp-link"
             className="mt-4 inline-flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-gold hover:text-navy"
           >

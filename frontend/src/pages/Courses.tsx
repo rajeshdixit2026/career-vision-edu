@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Info } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { Course } from "@/lib/types";
-import { COURSE_CATEGORIES, categorySlug } from "@/lib/site";
+import { CATEGORY_ICONS, COURSE_CATEGORIES, categorySlug } from "@/lib/site";
 import { FALLBACK_COURSES } from "@/lib/fallbackData";
 import PageHeader from "@/components/layout/PageHeader";
 import CourseCard from "@/components/cards/CourseCard";
@@ -54,12 +54,13 @@ export default function Courses() {
               type="button"
               data-testid={`filter-category-${categorySlug(cat)}`}
               onClick={() => selectCategory(cat)}
-              className={`press rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`press flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
                 category === cat
                   ? "border-navy bg-navy text-white"
                   : "border-slate-300 bg-white text-foreground/75 hover:border-navy hover:text-navy"
               }`}
             >
+              <span aria-hidden>{CATEGORY_ICONS[cat]}</span>
               {cat}
             </button>
           ))}

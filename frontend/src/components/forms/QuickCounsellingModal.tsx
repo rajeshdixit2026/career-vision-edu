@@ -1,6 +1,6 @@
-import { GraduationCap } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { LOGO_URL } from "@/lib/site";
 
 interface QuickCounsellingModalProps {
   open: boolean;
@@ -13,9 +13,7 @@ export default function QuickCounsellingModal({ open, onOpenChange }: QuickCouns
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg" data-testid="quick-counselling-modal">
         <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gold text-navy">
-            <GraduationCap className="size-5" />
-          </span>
+          <img src={LOGO_URL} alt="" className="h-11 w-auto shrink-0 object-contain" />
           <div>
             <DialogTitle className="font-heading text-xl font-bold">
               Book Your Free Counselling Session

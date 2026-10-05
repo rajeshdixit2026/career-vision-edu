@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, GraduationCap, Mail, Menu, Phone } from "lucide-react";
+import { ChevronDown, Mail, Menu, Phone } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { CONTACT, FOOTER_NAV, PRIMARY_NAV, SITE_NAME, SUPPORT_NAV } from "@/lib/site";
+import { CONTACT, FOOTER_NAV, LOGO_URL, PRIMARY_NAV, SITE_NAME, SUPPORT_NAV } from "@/lib/site";
 
 function slug(label: string): string {
   return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -62,16 +62,12 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-2.5" data-testid="nav-logo-link">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-gold text-navy">
-              <GraduationCap className="size-5" />
-            </span>
-            <span className="leading-tight">
-              <span className="block font-heading text-base font-bold text-white">Career Vision</span>
-              <span className="block text-[9px] font-semibold tracking-[0.22em] text-gold">
-                EDUCATION SERVICES
-              </span>
-            </span>
+          <Link to="/" className="flex items-center" data-testid="nav-logo-link">
+            <img
+              src={LOGO_URL}
+              alt="Career Vision EduServices — Learn, Grow, Succeed"
+              className="h-11 w-auto object-contain"
+            />
           </Link>
 
           <div className="hidden items-center gap-6 lg:flex">
@@ -142,12 +138,7 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 overflow-y-auto border-white/10 bg-navy text-white">
               <SheetTitle className="text-white" data-testid="nav-mobile-title">
-                <span className="flex items-center gap-2">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-gold text-navy">
-                    <GraduationCap className="size-4" />
-                  </span>
-                  {SITE_NAME}
-                </span>
+                <img src={LOGO_URL} alt={SITE_NAME} className="h-10 w-auto object-contain" />
               </SheetTitle>
               <div className="mt-2 flex flex-col gap-1 pb-6">
                 {FOOTER_NAV.map((link) => (

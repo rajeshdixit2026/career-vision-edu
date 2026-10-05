@@ -54,7 +54,7 @@ export default function Colleges() {
     <>
       <PageHeader
         badge="Partner Colleges"
-        title="150+ verified colleges across India"
+        title="250+ verified colleges across India"
         description="Government, private and deemed universities we work with directly — with transparent fees, real approvals and end-to-end admission support."
         image={IMAGES.campusModern}
       />

@@ -86,3 +86,13 @@ android-sdk/
 
 # overlay black-box crash/user-report dumps — session data, never history
 **/.emergent/recordings/
+
+# Local environment files
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+**/dist/
+
+.emergent/
+.ruff_cache/

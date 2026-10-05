@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # Emergent managed email proxy. Constant on purpose — an env var would go missing in deploys.
 EMAIL_BASE_URL = "https://integrations.emergentagent.com"
 EMAIL_KEY = os.environ.get("EMERGENT_EMAIL_KEY", "")
-EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Career Vision Education Services")
+EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Career Vision EduServices")
 EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "")
 # Dashboard deep-link used in the daily summary. Must stay an https URL on our own app (G3).

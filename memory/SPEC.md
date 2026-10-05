@@ -14,7 +14,7 @@ based in **Gopalganj, Bihar**, serving students across India.
 - Forms all render LeadCaptureForm; funding pages use FundingCalculator (client-side EMI math).
 
 ## Backend (all under /api, via api_router in server.py)
-- `GET /api/courses?category=` → Course[] (28 seeded)
+- `GET /api/courses?category=` → Course[] (79 seeded across the owner's 14 streams: Engineering & Technology, Management, Computer/IT, Commerce, Science, Agriculture, Medical/Healthcare, Law, Arts/Humanities, Hospitality, Design/Media, Architecture, Education, Diploma/Vocational — stream constants live at the top of `backend/seed.py` and must stay in sync with `COURSE_CATEGORIES` + `CATEGORY_ICONS` in `frontend/src/lib/site.ts`)
 - `GET /api/colleges?search=&state=&stream=` → College[] (58 seeded, incl. the owner-supplied partner list)
 - `POST /api/leads` → Lead (201). Body: name, phone (validated 10-digit Indian mobile), email?, course_interest?, state?, message?, source: apply|counselling|contact
 - `POST /api/enquiries` → Lead (201). Same model; forces source="contact" (contact page form).
@@ -59,8 +59,14 @@ Three server-side templates; all sends pass `_assert_safe_email()` and run via `
 - The email lists the last 24h of enquiries AND a gold callout counting anything still uncalled past the follow-up window.
 - **Skipped only when there is nothing to report** — no new enquiries AND nothing overdue (owner's choice).
 
+## Branding
+- **Theme: navy `#04194E` + gold `#FFCD2A`** (tokens `--color-navy`, `--color-navy-card`, `--color-navy-deep`, `--color-gold`, `--color-gold-soft` in `frontend/src/index.css`). Gold surfaces always carry navy text. An orange/blue experiment was reverted at the owner's request — do not reintroduce it.
+- **Logo**: `frontend/public/logo.png` — the owner's artwork with the white JPEG background keyed out (global near-white → transparent with an unmultiplied soft edge), colours untouched (blue `#003C78`, orange `#DC6400`). Referenced everywhere via `LOGO_URL` in `lib/site.ts`; also the favicon. It is transparent, so it sits directly on navy with no white tile.
+- Name: "Career Vision EduServices", tagline "Learn • Grow • Succeed" (`SITE_NAME` / `SITE_TAGLINE`).
+- Headline figures: **5+ years experience, 250+ partner colleges** (`HOME_STATS`).
+
 ## Imagery
-- All site imagery is brand-generated navy/gold vector graphics (no people, no stock photos) hosted on the Emergent CDN; URLs live in `IMAGES` in `frontend/src/lib/site.ts`. The owner plans to supply real office/team photos later — swap the `IMAGES` URLs when they arrive.
+- Section imagery is brand-generated navy/gold vector graphics (no people, no stock photos) on the Emergent CDN; URLs in `IMAGES` in `frontend/src/lib/site.ts`. The owner plans to supply real office/team photos later — swap those URLs when they arrive.
 
 ## WhatsApp
 - `components/layout/WhatsAppButton.tsx` — floating CTA on every public page (hidden on `/admin`), with a dismissible hint bubble and a pre-filled message.

@@ -5,7 +5,6 @@ import {
   AlertTriangle,
   Download,
   Inbox,
-  LockKeyhole,
   LogOut,
   MessageCircle,
   Phone,
@@ -15,7 +14,7 @@ import {
 } from "lucide-react";
 import { ApiError, apiGet, apiPatch, apiPost } from "@/lib/api";
 import type { AdminLeadsResponse, AdminSession, Lead } from "@/lib/types";
-import { LEAD_STATUSES, LEAD_STATUS_CLASSES, LEAD_STATUS_LABELS } from "@/lib/site";
+import { LEAD_STATUSES, LEAD_STATUS_CLASSES, LEAD_STATUS_LABELS, LOGO_URL } from "@/lib/site";
 import LeadNotesDialog from "@/components/admin/LeadNotesDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,9 +111,7 @@ function PinGate({ onSuccess }: { onSuccess: () => void }) {
         data-testid="admin-login-card"
         className="relative w-full max-w-sm rounded-2xl border border-white/15 bg-white/10 p-7 backdrop-blur-xl"
       >
-        <span className="flex size-11 items-center justify-center rounded-xl bg-gold text-navy">
-          <LockKeyhole className="size-5" />
-        </span>
+        <img src={LOGO_URL} alt="" className="h-12 w-auto object-contain" />
         <h1 className="mt-4 font-heading text-2xl font-bold text-white">Admin Login</h1>
         <p className="mt-1.5 text-sm text-white/65">
           Enter your passcode to view student enquiries.
