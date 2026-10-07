@@ -2,6 +2,7 @@ import path from "node:path";
 import { defineConfig, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { copyFileSync, mkdirSync } from "node:fs";
 import { visualEdits } from "@emergentbase/visual-edits/vite";
 
 // Supervisor exports DISABLE_HOT_RELOAD=true when the platform sets ENABLE_RELOAD=false.
