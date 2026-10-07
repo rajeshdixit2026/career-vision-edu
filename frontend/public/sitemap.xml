@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
     <loc>https://career-vision-edu-frontend.onrender.com/</loc>
   </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/about</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/courses</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/colleges</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/counseling</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/bihar-credit-card</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/education-loan</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/scholarships</loc>
+  </url>
+
+  <url>
+    <loc>https://career-vision-edu-frontend.onrender.com/contact</loc>
+  </url>
+
 </urlset>
