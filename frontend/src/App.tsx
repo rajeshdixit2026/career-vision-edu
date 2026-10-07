@@ -15,6 +15,7 @@ import Scholarships from "@/pages/Scholarships";
 import ContactUs from "@/pages/ContactUs";
 import ApplyNow from "@/pages/ApplyNow";
 import AdminDashboard from "@/pages/AdminDashboard";
+import SEO from "@/components/SEO";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -29,8 +30,50 @@ export default function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
 
+  const seo = {
+    "/": {
+      title: "Career Vision Education | Career Counseling & Admission Guidance",
+      description: "Career Vision Education offers career counseling, college admission guidance, scholarships and education support to students across India."
+    },
+    "/about": {
+      title: "About Career Vision Education | Career Guidance & Admission Support",
+      description: "Learn about Career Vision Education and our mission to help students choose the right course, college and career path."
+    },
+    "/courses": {
+      title: "Courses & Career Options | Career Vision Education",
+      description: "Explore courses and career options with expert guidance from Career Vision Education."
+    },
+    "/colleges": {
+      title: "Colleges & Admission Guidance | Career Vision Education",
+      description: "Find the right college and get expert admission guidance from Career Vision Education."
+    },
+    "/counseling": {
+      title: "Career Counseling | Career Vision Education",
+      description: "Get free 1-on-1 career counseling to choose the right course, college and career path."
+    },
+    "/bihar-credit-card": {
+      title: "Bihar Student Credit Card | Career Vision Education",
+      description: "Get guidance for Bihar Student Credit Card education loan eligibility, documents and application support."
+    },
+    "/education-loan": {
+      title: "Education Loan Assistance | Career Vision Education",
+      description: "Get education loan guidance and support for funding your higher education."
+    },
+    "/scholarships": {
+      title: "Scholarships | Career Vision Education",
+      description: "Explore scholarship opportunities and get guidance for higher education funding."
+    },
+    "/contact": {
+      title: "Contact Career Vision Education | Get Career Guidance",
+      description: "Contact Career Vision Education for career counseling, college admission and education support."
+    }
+  };
+
+  const currentSEO = seo[pathname as keyof typeof seo] || seo["/"];
+
   return (
     <div className="flex min-h-screen flex-col">
+      <SEO title={currentSEO.title} description={currentSEO.description} />
       <Navbar />
       <main className="flex-1">
         <ScrollToTop />
