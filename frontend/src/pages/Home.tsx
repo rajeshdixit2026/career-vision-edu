@@ -66,7 +66,7 @@ export default function Home() {
               <Star className="size-3 fill-navy" /> Trusted Career &amp; Admission Guidance
             </p>
             <h1 className="mt-5 font-heading text-4xl font-bold leading-[1.08] sm:text-5xl lg:text-[3.5rem]">
-              Make the Right Choice for <span className="text-gold">Your Future.</span>
+              Career Vision Education — Make the Right Choice for{" "}<span className="text-gold">Your Future.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/75 md:text-lg">
               Get expert career counseling and admission guidance to choose the right course, college
