@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://career-vision-edu-frontend.onrender.com/sitemap.xml
